@@ -3,7 +3,6 @@
 ## Demo 链接
 
 - 本地可体验地址：[http://127.0.0.1:4173/ai-med-companion-demo/index.html](http://127.0.0.1:4173/ai-med-companion-demo/index.html)
-- 文件地址：[outputs/ai-med-companion-demo/index.html](./ai-med-companion-demo/index.html)
 - 形式：静态前端原型，无需账号；直接打开即可体验拍照入库、今日提醒、电子药箱、用药问答。
 
 ## 用户旅程地图
