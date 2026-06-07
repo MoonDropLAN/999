@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>关键代码与配置截图</title>
+    <style>
+      :root {
+        --ink: #15211e;
+        --muted: #5f6e69;
+        --line: #d8e4df;
+        --mint: #1f7a68;
+        --panel: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px;
+        font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+        color: var(--ink);
+        background: #eef6f2;
+      }
+      h1 { margin: 0 0 8px; font-size: 34px; }
+      p { margin: 0; color: var(--muted); }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 24px;
+      }
+      section {
+        min-height: 360px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 18px 45px rgba(21, 33, 30, 0.12);
+      }
+      h2 { margin: 0 0 14px; font-size: 22px; }
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.45;
+        font: 15px/1.45 Consolas, "Courier New", monospace;
+        color: #24312e;
+      }
+      strong { color: var(--mint); }
+    </style>
+  </head>
+  <body>
+    <h1>AI 用药伴侣 · 关键代码 / 配置截图</h1>
+    <p>用于说明 system prompt、工作流定义、核心状态机和问答安全边界。</p>
+    <div class="grid">
+      <section>
+        <h2>System Prompt 摘要</h2>
+        <pre><strong>角色</strong>：你是面向 55-75 岁用户的 AI 用药伴侣。
+目标：帮助用户准确记录药品、按时服药、理解常见用药知识。
+
+硬性规则：
+1. 不直接替代医生诊断，不建议自行停药、换药、加量。
+2. 对药盒识别结果标注置信度，剂量/频次必须让用户确认。
+3. 出现胸闷、呼吸困难、严重皮疹、持续头晕等风险症状时，引导及时就医。
+4. 输出使用短句、大字号友好表达，避免医学黑话。</pre>
+      </section>
+      <section>
+        <h2>工作流定义</h2>
+        <pre>workflow:
+  scan_package:
+    input: camera_image
+    steps:
+      - OCR 读取药盒文字
+      - 药品库匹配通用名、规格、批准文号
+      - 生成候选服药计划
+      - 用户确认剂量、频次、开始日期
+      - 同步电子药箱与提醒任务
+  reminder:
+    trigger: schedule_time
+    steps:
+      - 本机语音 / 弹窗提醒
+      - 用户确认已服、稍后提醒或漏服
+      - 记录状态并同步家属端</pre>
+      </section>
+      <section>
+        <h2>核心交互状态机</h2>
+        <pre>dose.status:
+  pending -> done
+  pending -> skipped
+  skipped -> pending
+
+onConfirmTaken(dose):
+  dose.status = "done"
+  dose.taken_at = now()
+  sync("medicine_box", dose)
+  notifyCaregiverIfNeeded(dose)</pre>
+      </section>
+      <section>
+        <h2>问答安全边界</h2>
+        <pre>answer_policy:
+  allowed:
+    - 解释说明书常见信息
+    - 提醒漏服处理原则
+    - 提示常见副作用与观察方式
+  restricted:
+    - 诊断疾病
+    - 直接更改处方
+    - 给出个体化剂量调整
+  escalation:
+    - 严重过敏 / 呼吸困难
+    - 连续漏服
+    - 血压、血糖明显异常</pre>
+      </section>
+    </div>
+  </body>
+</html>

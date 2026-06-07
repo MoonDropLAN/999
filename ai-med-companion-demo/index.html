@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI 用药伴侣 Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">华润三九 · 产品设计挑战 Demo</p>
+        <h1>AI 用药伴侣</h1>
+      </div>
+      <div class="status-pill" aria-label="药箱连接状态">
+        <span class="dot"></span>
+        药箱已连接
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <aside class="left-rail" aria-label="用户信息与今日概览">
+        <img class="scene" src="assets/product-scene.svg" alt="手机识别药盒并同步到电子药箱的产品场景" />
+        <section class="profile-panel">
+          <div>
+            <p class="muted">当前用户</p>
+            <h2>李阿姨，68 岁</h2>
+          </div>
+          <button class="icon-button" type="button" title="切换家属视角" aria-label="切换家属视角">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </section>
+        <section class="summary-grid" aria-label="今日摘要">
+          <div>
+            <strong id="todayCount">2/3</strong>
+            <span>今日已服</span>
+          </div>
+          <div>
+            <strong>1</strong>
+            <span>待确认</span>
+          </div>
+          <div>
+            <strong>4</strong>
+            <span>药箱药品</span>
+          </div>
+          <div>
+            <strong>96%</strong>
+            <span>7 日依从</span>
+          </div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <nav class="tabs" aria-label="核心流程">
+          <button class="tab active" type="button" data-tab="today">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>
+            今日服药
+          </button>
+          <button class="tab" type="button" data-tab="scan">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
+            拍照入库
+          </button>
+          <button class="tab" type="button" data-tab="cabinet">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 4v16"/><path d="M14 15h3"/></svg>
+            电子药箱
+          </button>
+          <button class="tab" type="button" data-tab="qa">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+            用药问答
+          </button>
+        </nav>
+
+        <section id="today" class="view active" aria-labelledby="today-title">
+          <div class="view-header">
+            <div>
+              <p class="muted">2026 年 6 月 7 日 · 周日</p>
+              <h2 id="today-title">下一次提醒：晚饭后 30 分钟</h2>
+            </div>
+            <button id="voiceBtn" class="secondary-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              朗读提醒
+            </button>
+          </div>
+          <div class="dose-list" id="doseList"></div>
+          <aside class="notice">
+            <strong>副作用提醒</strong>
+            <p>如果今天出现头晕、心慌或皮疹，先记录症状，再联系医生或药师确认是否需要调整用药。</p>
+          </aside>
+        </section>
+
+        <section id="scan" class="view" aria-labelledby="scan-title">
+          <div class="view-header">
+            <div>
+              <p class="muted">模拟 OCR + 药品知识库匹配</p>
+              <h2 id="scan-title">拍照识别药盒包装</h2>
+            </div>
+            <button id="scanBtn" class="primary-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              开始识别
+            </button>
+          </div>
+          <div class="scan-layout">
+            <div class="camera-frame" aria-label="药盒照片预览">
+              <div class="scan-line"></div>
+              <div class="medicine-box">
+                <span>999</span>
+                <strong>缬沙坦胶囊</strong>
+                <small>80mg · 28 粒</small>
+              </div>
+            </div>
+            <div class="recognition-panel" id="recognitionPanel">
+              <p class="muted">等待识别</p>
+              <h3>请将药盒正面对准取景框</h3>
+              <p>识别后会自动生成服药计划，并提示需要人工确认的字段。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="cabinet" class="view" aria-labelledby="cabinet-title">
+          <div class="view-header">
+            <div>
+              <p class="muted">电子药箱</p>
+              <h2 id="cabinet-title">药品计划与库存</h2>
+            </div>
+            <button id="refillBtn" class="secondary-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              添加药品
+            </button>
+          </div>
+          <div class="cabinet-grid" id="cabinetGrid"></div>
+        </section>
+
+        <section id="qa" class="view" aria-labelledby="qa-title">
+          <div class="view-header">
+            <div>
+              <p class="muted">基于药品说明书与风险规则的模拟问答</p>
+              <h2 id="qa-title">用药知识问答</h2>
+            </div>
+          </div>
+          <div class="qa-box">
+            <div class="quick-questions" id="quickQuestions"></div>
+            <label for="questionInput">输入问题</label>
+            <div class="ask-row">
+              <input id="questionInput" type="text" value="降压药漏服一次怎么办？" />
+              <button id="askBtn" class="primary-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
+                询问
+              </button>
+            </div>
+            <div class="answer" id="answerBox">
+              <strong>AI 药师建议</strong>
+              <p>如果接近下一次服药时间，不要加倍补服。请记录漏服，并按下一次正常计划服用。若连续漏服或血压异常，请联系医生。</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
